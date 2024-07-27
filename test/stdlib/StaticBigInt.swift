@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2022 - 2023 Apple Inc. and the Swift project authors
+// Copyright (c) 2022 - 2024 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -48,30 +48,40 @@ extension StaticBigIntTests {
 
   @available(SwiftStdlib 5.8, *)
   func testBinaryRepresentation() {
-    typealias Expected = (signum: Int, bitWidth: Int, _32bit: [UInt], _64bit: [UInt])
+    typealias Expected = (signum: Int, bitWidth: Int, _16bit: [UInt], _32bit: [UInt], _64bit: [UInt])
     let m = UInt(bitPattern: Int.min)
     let keyValuePairs: KeyValuePairs<StaticBigInt, Expected> = [
-      -0x80000000000000000000000000000002: (-1, 129, [~1, ~0, ~0, ~m, ~0], [~1, ~m, ~0]),
-      -0x80000000000000000000000000000001: (-1, 129, [~0, ~0, ~0, ~m, ~0], [~0, ~m, ~0]),
-      -0x80000000000000000000000000000000: (-1, 128, [ 0,  0,  0,  m, ~0], [ 0,  m, ~0]),
-      -0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: (-1, 128, [ 1,  0,  0,  m, ~0], [ 1,  m, ~0]),
-      -0x4:                                (-1,   3, [~3, ~0, ~0, ~0, ~0], [~3, ~0, ~0]),
-      -0x3:                                (-1,   3, [~2, ~0, ~0, ~0, ~0], [~2, ~0, ~0]),
-      -0x2:                                (-1,   2, [~1, ~0, ~0, ~0, ~0], [~1, ~0, ~0]),
-      -0x1:                                (-1,   1, [~0, ~0, ~0, ~0, ~0], [~0, ~0, ~0]),
-       0x0:                                ( 0,   1, [ 0,  0,  0,  0,  0], [ 0,  0,  0]),
-       0x1:                                (+1,   2, [ 1,  0,  0,  0,  0], [ 1,  0,  0]),
-       0x2:                                (+1,   3, [ 2,  0,  0,  0,  0], [ 2,  0,  0]),
-       0x3:                                (+1,   3, [ 3,  0,  0,  0,  0], [ 3,  0,  0]),
-       0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE: (+1, 128, [~1, ~0, ~0, ~m,  0], [~1, ~m,  0]),
-       0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: (+1, 128, [~0, ~0, ~0, ~m,  0], [~0, ~m,  0]),
-       0x80000000000000000000000000000000: (+1, 129, [ 0,  0,  0,  m,  0], [ 0,  m,  0]),
-       0x80000000000000000000000000000001: (+1, 129, [ 1,  0,  0,  m,  0], [ 1,  m,  0]),
+      -0x80000000000000000000000000000002: (-1, 129, [~1, ~0, ~0, ~0, ~0, ~0, ~0, ~m, ~0], [~1, ~0, ~0, ~m, ~0], [~1, ~m, ~0]),
+      -0x80000000000000000000000000000001: (-1, 129, [~0, ~0, ~0, ~0, ~0, ~0, ~0, ~m, ~0], [~0, ~0, ~0, ~m, ~0], [~0, ~m, ~0]),
+      -0x80000000000000000000000000000000: (-1, 128, [ 0,  0,  0,  0,  0,  0,  0,  m, ~0], [ 0,  0,  0,  m, ~0], [ 0,  m, ~0]),
+      -0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: (-1, 128, [ 1,  0,  0,  0,  0,  0,  0,  m, ~0], [ 1,  0,  0,  m, ~0], [ 1,  m, ~0]),
+      -0x4:                                (-1,   3, [~3, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0], [~3, ~0, ~0, ~0, ~0], [~3, ~0, ~0]),
+      -0x3:                                (-1,   3, [~2, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0], [~2, ~0, ~0, ~0, ~0], [~2, ~0, ~0]),
+      -0x2:                                (-1,   2, [~1, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0], [~1, ~0, ~0, ~0, ~0], [~1, ~0, ~0]),
+      -0x1:                                (-1,   1, [~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0], [~0, ~0, ~0, ~0, ~0], [~0, ~0, ~0]),
+       0x0:                                ( 0,   1, [ 0,  0,  0,  0,  0,  0,  0,  0,  0], [ 0,  0,  0,  0,  0], [ 0,  0,  0]),
+       0x1:                                (+1,   2, [ 1,  0,  0,  0,  0,  0,  0,  0,  0], [ 1,  0,  0,  0,  0], [ 1,  0,  0]),
+       0x2:                                (+1,   3, [ 2,  0,  0,  0,  0,  0,  0,  0,  0], [ 2,  0,  0,  0,  0], [ 2,  0,  0]),
+       0x3:                                (+1,   3, [ 3,  0,  0,  0,  0,  0,  0,  0,  0], [ 3,  0,  0,  0,  0], [ 3,  0,  0]),
+       0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE: (+1, 128, [~1, ~0, ~0, ~0, ~0, ~0, ~0, ~m,  0], [~1, ~0, ~0, ~m,  0], [~1, ~m,  0]),
+       0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: (+1, 128, [~0, ~0, ~0, ~0, ~0, ~0, ~0, ~m,  0], [~0, ~0, ~0, ~m,  0], [~0, ~m,  0]),
+       0x80000000000000000000000000000000: (+1, 129, [ 0,  0,  0,  0,  0,  0,  0,  m,  0], [ 0,  0,  0,  m,  0], [ 0,  m,  0]),
+       0x80000000000000000000000000000001: (+1, 129, [ 1,  0,  0,  0,  0,  0,  0,  m,  0], [ 1,  0,  0,  m,  0], [ 1,  m,  0]),
     ]
     for (actual, expected) in keyValuePairs {
       expectEqual(expected.signum,   actual.signum())
       expectEqual(expected.bitWidth, actual.bitWidth)
-#if _pointerBitWidth(_32)
+#if _pointerBitWidth(_16)
+      expectEqual(expected._16bit[0], actual[0])
+      expectEqual(expected._16bit[1], actual[1])
+      expectEqual(expected._16bit[2], actual[2])
+      expectEqual(expected._16bit[3], actual[3])
+      expectEqual(expected._16bit[4], actual[4])
+      expectEqual(expected._16bit[5], actual[5])
+      expectEqual(expected._16bit[6], actual[6])
+      expectEqual(expected._16bit[7], actual[7])
+      expectEqual(expected._16bit[8], actual[8])
+#elseif _pointerBitWidth(_32)
       expectEqual(expected._32bit[0], actual[0])
       expectEqual(expected._32bit[1], actual[1])
       expectEqual(expected._32bit[2], actual[2])
@@ -185,7 +195,18 @@ extension StaticBigIntTests {
     let negative = Wrapper(-0x00112233_44556677_8899AABB_CCDDEEFF)
     expectEqual( -1, negative.actual.signum())
     expectEqual(118, negative.actual.bitWidth)
-#if _pointerBitWidth(_32)
+#if _pointerBitWidth(_16)
+    expectEqual(0x1101, negative.actual[0])
+    expectEqual(0x3322, negative.actual[1])
+    expectEqual(0x5544, negative.actual[2])
+    expectEqual(0x7766, negative.actual[3])
+    expectEqual(0x9988, negative.actual[4])
+    expectEqual(0xBBAA, negative.actual[5])
+    expectEqual(0xDDCC, negative.actual[6])
+    expectEqual(0xFFEE, negative.actual[7])
+    expectEqual(0xFFFF, negative.actual[8])
+    expectEqual(0xFFFF, negative.actual[.max])
+#elseif _pointerBitWidth(_32)
     expectEqual(0x33221101, negative.actual[0])
     expectEqual(0x77665544, negative.actual[1])
     expectEqual(0xBBAA9988, negative.actual[2])
@@ -207,7 +228,18 @@ extension StaticBigIntTests {
     let positive = Wrapper(0x00112233_44556677_8899AABB_CCDDEEFF)
     expectEqual( +1, positive.actual.signum())
     expectEqual(118, positive.actual.bitWidth)
-#if _pointerBitWidth(_32)
+#if _pointerBitWidth(_16)
+    expectEqual(0xEEFF, positive.actual[0])
+    expectEqual(0xCCDD, positive.actual[1])
+    expectEqual(0xAABB, positive.actual[2])
+    expectEqual(0x8899, positive.actual[3])
+    expectEqual(0x6677, positive.actual[4])
+    expectEqual(0x4455, positive.actual[5])
+    expectEqual(0x2233, positive.actual[6])
+    expectEqual(0x0011, positive.actual[7])
+    expectEqual(0x0000, positive.actual[8])
+    expectEqual(0x0000, positive.actual[.max])
+#elseif _pointerBitWidth(_32)
     expectEqual(0xCCDDEEFF, positive.actual[0])
     expectEqual(0x8899AABB, positive.actual[1])
     expectEqual(0x44556677, positive.actual[2])
@@ -226,7 +258,12 @@ extension StaticBigIntTests {
 
   @available(SwiftStdlib 5.8, *)
   func testWrapperFibonacciSequence() {
-#if _pointerBitWidth(_32)
+#if _pointerBitWidth(_16)
+    let wordCount = 25
+    let fibonacciSequence = Wrapper(
+      0xB520_6FF1_452F_2AC2_1A6D_1055_0A18_063D_03DB_0262_0179_00E9_0090_0059_0037_0022_0015_000D_0008_0005_0003_0002_0001_0001_0000
+    )
+#elseif _pointerBitWidth(_32)
     let wordCount = 48
     let fibonacciSequence = Wrapper(
       0xB11924E1_6D73E55F_43A53F82_29CEA5DD_19D699A5_0FF80C38_09DE8D6D_06197ECB_03C50EA2_02547029_01709E79_00E3D1B0_008CCCC9_005704E7_0035C7E2_00213D05_00148ADD_000CB228_0007D8B5_0004D973_0002FF42_0001DA31_00012511_0000B520_00006FF1_0000452F_00002AC2_00001A6D_00001055_00000A18_0000063D_000003DB_00000262_00000179_000000E9_00000090_00000059_00000037_00000022_00000015_0000000D_00000008_00000005_00000003_00000002_00000001_00000001_00000000

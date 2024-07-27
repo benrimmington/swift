@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2022 - 2024 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -97,7 +97,7 @@ extension StaticBigInt {
 #endif
   }
 
-  /// Returns a 32-bit or 64-bit word of this value's binary representation.
+  /// Returns a 16/32/64-bit word of this value's binary representation.
   ///
   /// The words are ordered from least significant to most significant, with
   /// an infinite sign extension. Negative values are in two's complement.
@@ -156,8 +156,12 @@ extension StaticBigInt: CustomDebugStringConvertible {
       var utf8 = utf8.prefix(capacity)
       utf8.initialize(repeating: UInt8(ascii: "0"))
 
-      // Use a 32-bit element type, to generate small hexadecimal strings.
+      // Use a 16/32-bit element type, to generate small hexadecimal strings.
+#if _pointerBitWidth(_16)
+      typealias Element = UInt16
+#else
       typealias Element = UInt32
+#endif
       let hexDigitsPerElement = Element.bitWidth / 4
       _internalInvariant(hexDigitsPerElement <= _SmallString.capacity)
       _internalInvariant(UInt.bitWidth.isMultiple(of: Element.bitWidth))
